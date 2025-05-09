@@ -3,620 +3,226 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GameZone - Free Online Games</title>
+    <title>Family Expense Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Global Styles */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
         body {
-            background-color: #f5f5f5;
-            color: #333;
-        }
-        
-        /* Header Styles */
-        header {
-            background: linear-gradient(135deg, #6e8efb, #a777e3);
-            color: white;
-            padding: 1rem 2rem;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        
-        .header-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .logo {
-            font-size: 1.8rem;
-            font-weight: bold;
-        }
-        
-        .logo span {
-            color: #ffeb3b;
-        }
-        
-        nav ul {
-            display: flex;
-            list-style: none;
-        }
-        
-        nav ul li {
-            margin-left: 1.5rem;
-        }
-        
-        nav ul li a {
-            color: white;
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-        
-        nav ul li a:hover {
-            color: #ffeb3b;
-        }
-        
-        /* Main Content Styles */
-        .container {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-        }
-        
-        .hero {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-        
-        .hero h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            color: #444;
-        }
-        
-        .hero p {
-            font-size: 1.1rem;
-            color: #666;
-            max-width: 700px;
-            margin: 0 auto 2rem;
-        }
-        
-        .search-bar {
-            max-width: 600px;
-            margin: 0 auto;
-            position: relative;
-        }
-        
-        .search-bar input {
-            width: 100%;
-            padding: 0.8rem 1rem;
-            border: none;
-            border-radius: 30px;
-            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
-            font-size: 1rem;
-            outline: none;
-        }
-        
-        .search-bar button {
-            position: absolute;
-            right: 5px;
-            top: 5px;
-            background: linear-gradient(135deg, #6e8efb, #a777e3);
-            color: white;
-            border: none;
-            border-radius: 25px;
-            padding: 0.5rem 1.2rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .search-bar button:hover {
-            background: linear-gradient(135deg, #5d7de8, #9666d6);
-        }
-        
-        /* Categories Section */
-        .section-title {
-            font-size: 1.8rem;
-            margin-bottom: 1.5rem;
-            color: #444;
-            position: relative;
-            padding-bottom: 0.5rem;
-        }
-        
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 60px;
-            height: 3px;
-            background: linear-gradient(135deg, #6e8efb, #a777e3);
-        }
-        
-        .categories {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 1rem;
-            margin-bottom: 3rem;
-        }
-        
-        .category-card {
-            background: white;
-            border-radius: 8px;
-            padding: 1rem;
-            text-align: center;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        
-        .category-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-        
-        .category-card i {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-            color: #6e8efb;
-        }
-        
-        .category-card h3 {
-            font-size: 1rem;
-            color: #555;
-        }
-        
-        /* Featured Games Section */
-        .games-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 3rem;
-        }
-        
-        .game-card {
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        
-        .game-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-        
-        .game-thumbnail {
-            height: 150px;
-            background-size: cover;
-            background-position: center;
-        }
-        
-        .game-info {
-            padding: 1rem;
-        }
-        
-        .game-info h3 {
-            margin-bottom: 0.5rem;
-            color: #444;
-        }
-        
-        .game-info p {
-            color: #666;
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .game-info .play-btn {
-            display: inline-block;
-            background: linear-gradient(135deg, #6e8efb, #a777e3);
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            text-decoration: none;
-            font-weight: 500;
-            margin-top: 0.5rem;
-            transition: all 0.3s ease;
-        }
-        
-        .game-info .play-btn:hover {
-            background: linear-gradient(135deg, #5d7de8, #9666d6);
-        }
-        
-        /* Game Player Section */
-        .game-player {
-            display: none;
-            margin-bottom: 3rem;
-        }
-        
-        .game-player.active {
-            display: block;
-        }
-        
-        .game-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-        
-        .back-btn {
-            background: #6e8efb;
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .back-btn:hover {
-            background: #5d7de8;
-        }
-        
-        .game-frame {
-            width: 100%;
-            height: 600px;
-            border: none;
-            border-radius: 8px;
-            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
-            background: white;
-        }
-        
-        /* Footer Styles */
-        footer {
-            background: #333;
-            color: white;
-            padding: 2rem;
-            text-align: center;
-        }
-        
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            margin: 1rem 0;
-        }
-        
-        .footer-links a {
-            color: white;
-            margin: 0 1rem;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-        
-        .footer-links a:hover {
-            color: #6e8efb;
-        }
-        
-        .copyright {
-            margin-top: 1rem;
-            color: #aaa;
-            font-size: 0.9rem;
-        }
-        
-        /* Responsive Styles */
-        @media (max-width: 768px) {
-            .header-container {
-                flex-direction: column;
-                text-align: center;
-            }
-            
-            nav ul {
-                margin-top: 1rem;
-            }
-            
-            .hero h1 {
-                font-size: 2rem;
-            }
-            
-            .game-frame {
-                height: 400px;
-            }
+            font-family: 'Inter', sans-serif;
         }
     </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                    },
+                },
+            },
+        }
+    </script>
+    <script src="https://apis.google.com/js/api.js"></script>
 </head>
-<body>
-    <header>
-        <div class="header-container">
-            <div class="logo">Game<span>Zone</span></div>
-            <nav>
-                <ul>
-                    <li><a href="#">Home</a></li>
-                    <li><a href="#">Categories</a></li>
-                    <li><a href="#">New Games</a></li>
-                    <li><a href="#">Popular</a></li>
-                </ul>
-            </nav>
+<body class="bg-gradient-to-tl from-purple-400 to-pink-300 min-h-screen flex justify-center items-center py-10">
+    <div class="container bg-white rounded-lg shadow-md p-6 w-4/5 max-w-2xl">
+        <h1 class="text-2xl font-semibold text-center text-gray-800 mb-4 bg-gradient-to-r from-indigo-300 to-blue-300 bg-clip-text text-transparent">Family Expense Tracker</h1>
+
+        <div id="expense-form" class="mb-4 p-4 bg-white/80 backdrop-blur-md rounded-lg shadow-inner">
+            <h2 class="text-xl font-semibold text-gray-700 mb-3">Add Expense</h2>
+            <form>
+                <div class="mb-2">
+                    <label for="name" class="block text-gray-600 text-sm font-bold mb-2">Name:</label>
+                    <input type="text" id="name" name="name" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                </div>
+                <div class="mb-2">
+                    <label for="category" class="block text-gray-600 text-sm font-bold mb-2">Category:</label>
+                    <select id="category" name="category" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                        <option value="" disabled selected>Select Category</option>
+                        <option value="food">Food</option>
+                        <option value="housing">Housing</option>
+                        <option value="transport">Transport</option>
+                        <option value="utilities">Utilities</option>
+                        <option value="entertainment">Entertainment</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="mb-2">
+                    <label for="amount" class="block text-gray-600 text-sm font-bold mb-2">Amount:</label>
+                    <input type="number" id="amount" name="amount" required min="0" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                </div>
+                <div class="mb-2">
+                    <label for="month" class="block text-gray-600 text-sm font-bold mb-2">Month:</label>
+                    <input type="month" id="month" name="month" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                </div>
+                <button type="submit" class="bg-gradient-to-r from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Add Expense</button>
+            </form>
         </div>
-    </header>
-    
-    <div class="container">
-        <div class="hero">
-            <h1>Play Free Online Games</h1>
-            <p>Discover thousands of fun games in all categories. No downloads, no installs - play instantly in your browser!</p>
-            <div class="search-bar">
-                <input type="text" placeholder="Search for games...">
-                <button><i class="fas fa-search"></i> Search</button>
+
+        <div id="summary" class="mb-4 p-4 bg-white/80 backdrop-blur-md rounded-lg shadow-inner">
+            <h2 class="text-xl font-semibold text-gray-700 mb-3">Monthly Summary</h2>
+            <div id="summary-content" class="text-gray-800">
+                <p>No expenses added yet for the selected month.</p>
             </div>
         </div>
-        
-        <!-- Categories Section -->
-        <div class="categories-section">
-            <h2 class="section-title">Categories</h2>
-            <div class="categories">
-                <div class="category-card" onclick="filterGames('all')">
-                    <i class="fas fa-gamepad"></i>
-                    <h3>All Games</h3>
-                </div>
-                <div class="category-card" onclick="filterGames('action')">
-                    <i class="fas fa-running"></i>
-                    <h3>Action</h3>
-                </div>
-                <div class="category-card" onclick="filterGames('adventure')">
-                    <i class="fas fa-mountain"></i>
-                    <h3>Adventure</h3>
-                </div>
-                <div class="category-card" onclick="filterGames('puzzle')">
-                    <i class="fas fa-puzzle-piece"></i>
-                    <h3>Puzzle</h3>
-                </div>
-                <div class="category-card" onclick="filterGames('sports')">
-                    <i class="fas fa-basketball-ball"></i>
-                    <h3>Sports</h3>
-                </div>
-                <div class="category-card" onclick="filterGames('racing')">
-                    <i class="fas fa-car"></i>
-                    <h3>Racing</h3>
-                </div>
-                <div class="category-card" onclick="filterGames('shooting')">
-                    <i class="fas fa-crosshairs"></i>
-                    <h3>Shooting</h3>
-                </div>
-                <div class="category-card" onclick="filterGames('multiplayer')">
-                    <i class="fas fa-users"></i>
-                    <h3>Multiplayer</h3>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Featured Games Section -->
-        <div class="featured-games">
-            <h2 class="section-title">Featured Games</h2>
-            <div class="games-grid">
-                <!-- Game 1 -->
-                <div class="game-card" data-category="action" data-game="stickman">
-                    <div class="game-thumbnail" style="background-image: url('https://img.gamedistribution.com/38e29e0a0a1a4a4b8a9f3a5a5a5a5a5a.jpg');"></div>
-                    <div class="game-info">
-                        <h3>Stickman Fighter</h3>
-                        <p>Epic stickman battle with awesome moves</p>
-                        <a href="#" class="play-btn" onclick="loadGame('stickman')">Play Now</a>
-                    </div>
-                </div>
-                
-                <!-- Game 2 -->
-                <div class="game-card" data-category="puzzle" data-game="2048">
-                    <div class="game-thumbnail" style="background-image: url('https://img.gamedistribution.com/38e29e0a0a1a4a4b8a9f3a5a5a5a5a5a.jpg');"></div>
-                    <div class="game-info">
-                        <h3>2048</h3>
-                        <p>Combine tiles to reach 2048 in this addictive puzzle</p>
-                        <a href="#" class="play-btn" onclick="loadGame('2048')">Play Now</a>
-                    </div>
-                </div>
-                
-                <!-- Game 3 -->
-                <div class="game-card" data-category="racing" data-game="car">
-                    <div class="game-thumbnail" style="background-image: url('https://img.gamedistribution.com/38e29e0a0a1a4a4b8a9f3a5a5a5a5a5a.jpg');"></div>
-                    <div class="game-info">
-                        <h3>Crazy Car Stunts</h3>
-                        <p>Perform amazing stunts in this racing game</p>
-                        <a href="#" class="play-btn" onclick="loadGame('car')">Play Now</a>
-                    </div>
-                </div>
-                
-                <!-- Game 4 -->
-                <div class="game-card" data-category="shooting" data-game="zombie">
-                    <div class="game-thumbnail" style="background-image: url('https://img.gamedistribution.com/38e29e0a0a1a4a4b8a9f3a5a5a5a5a5a.jpg');"></div>
-                    <div class="game-info">
-                        <h3>Zombie Shooter</h3>
-                        <p>Survive the zombie apocalypse</p>
-                        <a href="#" class="play-btn" onclick="loadGame('zombie')">Play Now</a>
-                    </div>
-                </div>
-                
-                <!-- Game 5 -->
-                <div class="game-card" data-category="adventure" data-game="minecraft">
-                    <div class="game-thumbnail" style="background-image: url('https://img.gamedistribution.com/38e29e0a0a1a4a4b8a9f3a5a5a5a5a5a.jpg');"></div>
-                    <div class="game-info">
-                        <h3>Minecraft Classic</h3>
-                        <p>Build and explore in this classic version</p>
-                        <a href="#" class="play-btn" onclick="loadGame('minecraft')">Play Now</a>
-                    </div>
-                </div>
-                
-                <!-- Game 6 -->
-                <div class="game-card" data-category="sports" data-game="basketball">
-                    <div class="game-thumbnail" style="background-image: url('https://img.gamedistribution.com/38e29e0a0a1a4a4b8a9f3a5a5a5a5a5a.jpg');"></div>
-                    <div class="game-info">
-                        <h3>Basketball Stars</h3>
-                        <p>Show off your basketball skills</p>
-                        <a href="#" class="play-btn" onclick="loadGame('basketball')">Play Now</a>
-                    </div>
-                </div>
-                
-                <!-- Game 7 -->
-                <div class="game-card" data-category="multiplayer" data-game="agar">
-                    <div class="game-thumbnail" style="background-image: url('https://img.gamedistribution.com/38e29e0a0a1a4a4b8a9f3a5a5a5a5a5a.jpg');"></div>
-                    <div class="game-info">
-                        <h3>Agar.io</h3>
-                        <p>Eat or be eaten in this multiplayer game</p>
-                        <a href="#" class="play-btn" onclick="loadGame('agar')">Play Now</a>
-                    </div>
-                </div>
-                
-                <!-- Game 8 -->
-                <div class="game-card" data-category="puzzle" data-game="sudoku">
-                    <div class="game-thumbnail" style="background-image: url('https://img.gamedistribution.com/38e29e0a0a1a4a4b8a9f3a5a5a5a5a5a.jpg');"></div>
-                    <div class="game-info">
-                        <h3>Sudoku</h3>
-                        <p>Classic number puzzle game</p>
-                        <a href="#" class="play-btn" onclick="loadGame('sudoku')">Play Now</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Game Player Section (Hidden by default) -->
-        <div class="game-player" id="gamePlayer">
-            <div class="game-header">
-                <h2 class="section-title" id="gameTitle">Game Title</h2>
-                <button class="back-btn" onclick="hideGame()"><i class="fas fa-arrow-left"></i> Back to Games</button>
-            </div>
-            <iframe class="game-frame" id="gameFrame" allowfullscreen></iframe>
+
+        <div id="message-box" class="mt-4 p-3 bg-white/80 backdrop-blur-md rounded-lg shadow-inner text-center text-gray-700">
+            <p id="message-text"></p>
         </div>
     </div>
-    
-    <footer>
-        <div class="footer-content">
-            <div class="logo">Game<span>Zone</span></div>
-            <div class="footer-links">
-                <a href="#">About Us</a>
-                <a href="#">Contact</a>
-                <a href="#">Privacy Policy</a>
-                <a href="#">Terms of Service</a>
-            </div>
-            <p class="copyright">© 2023 GameZone. All rights reserved.</p>
-        </div>
-    </footer>
-    
+
     <script>
-        // Game embed codes (replace with actual embed codes from game providers)
-        const games = {
-            'stickman': '<iframe src="https://html5.gamedistribution.com/38e29e0a0a1a4a4b8a9f3a5a5a5a5a5a/" width="100%" height="100%" frameborder="0" scrolling="no"></iframe>',
-            '2048': '<iframe src="https://gamedistribution.com/games/2048" width="100%" height="100%" frameborder="0" scrolling="no"></iframe>',
-            'car': '<iframe src="https://html5.gamedistribution.com/38e29e0a0a1a4a4b8a9f3a5a5a5a5a5a/" width="100%" height="100%" frameborder="0" scrolling="no"></iframe>',
-            'zombie': '<iframe src="https://html5.gamedistribution.com/38e29e0a0a1a4a4b8a9f3a5a5a5a5a5a/" width="100%" height="100%" frameborder="0" scrolling="no"></iframe>',
-            'minecraft': '<iframe src="https://classic.minecraft.net/" width="100%" height="100%" frameborder="0" scrolling="no"></iframe>',
-            'basketball': '<iframe src="https://html5.gamedistribution.com/38e29e0a0a1a4a4b8a9f3a5a5a5a5a5a/" width="100%" height="100%" frameborder="0" scrolling="no"></iframe>',
-            'agar': '<iframe src="https://agar.io/" width="100%" height="100%" frameborder="0" scrolling="no"></iframe>',
-            'sudoku': '<iframe src="https://html5.gamedistribution.com/38e29e0a0a1a4a4b8a9f3a5a5a5a5a5a/" width="100%" height="100%" frameborder="0" scrolling="no"></iframe>'
-        };
-        
-        // Game titles
-        const gameTitles = {
-            'stickman': 'Stickman Fighter',
-            '2048': '2048 Puzzle Game',
-            'car': 'Crazy Car Stunts',
-            'zombie': 'Zombie Shooter',
-            'minecraft': 'Minecraft Classic',
-            'basketball': 'Basketball Stars',
-            'agar': 'Agar.io',
-            'sudoku': 'Sudoku'
-        };
-        
-        // Load game function
-        function loadGame(gameId) {
-            const gamePlayer = document.getElementById('gamePlayer');
-            const gameFrame = document.getElementById('gameFrame');
-            const gameTitle = document.getElementById('gameTitle');
-            
-            // Set game title
-            gameTitle.textContent = gameTitles[gameId] || 'Game';
-            
-            // Load game (in a real implementation, you would use the embed code)
-            // For this demo, we'll just show a message
-            gameFrame.srcdoc = `
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <style>
-                        body {
-                            display: flex;
-                            justify-content: center;
-                            align-items: center;
-                            height: 100vh;
-                            margin: 0;
-                            background: #f0f0f0;
-                            font-family: Arial, sans-serif;
-                        }
-                        .game-placeholder {
-                            text-align: center;
-                            padding: 2rem;
-                            background: white;
-                            border-radius: 8px;
-                            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-                        }
-                    </style>
-                </head>
-                <body>
-                    <div class="game-placeholder">
-                        <h2>${gameTitles[gameId] || 'Game'}</h2>
-                        <p>In a real implementation, this would be the embedded game.</p>
-                        <p>Embed code for this game would be:</p>
-                        <textarea style="width: 100%; height: 100px; margin-top: 1rem;">${games[gameId] || 'No embed code available'}</textarea>
-                    </div>
-                </body>
-                </html>
-            `;
-            
-            // Show game player and hide other content
-            document.querySelector('.featured-games').style.display = 'none';
-            document.querySelector('.categories-section').style.display = 'none';
-            document.querySelector('.hero').style.display = 'none';
-            gamePlayer.classList.add('active');
+        const expenseForm = document.querySelector('#expense-form form');
+        const summaryContent = document.querySelector('#summary-content');
+        const messageBox = document.querySelector('#message-box');
+        const messageText = document.querySelector('#message-text');
+
+        let expenses = [];
+
+        // Google Sheets API configuration
+        const SPREADSHEET_ID = 'YOUR_SPREADSHEET_ID'; // Replace with your spreadsheet ID
+        const SHEET_NAME = 'Sheet1'; // Replace with your sheet name
+        const CLIENT_ID = 'YOUR_CLIENT_ID'; // Replace with your client ID
+        const API_KEY = 'YOUR_API_KEY'; // Replace with your API key
+
+        // Initialize Google API client
+        function initClient() {
+            gapi.client.init({
+                apiKey: API_KEY,
+                clientId: CLIENT_ID,
+                discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
+                scope: 'https://www.googleapis.com/auth/spreadsheets',
+            }).then(() => {
+                console.log('Google Sheets API client initialized');
+                // You can call listMajors here if you want to test the connection
+                // listMajors();
+            }).catch(err => {
+                console.error("Error initializing gapi client:", err);
+                displayMessage('Error initializing Google Sheets API. Check console for details.', 'error');
+            });
         }
-        
-        // Hide game and show main content
-        function hideGame() {
-            document.getElementById('gamePlayer').classList.remove('active');
-            document.querySelector('.featured-games').style.display = 'block';
-            document.querySelector('.categories-section').style.display = 'block';
-            document.querySelector('.hero').style.display = 'block';
+
+
+        function displayMessage(message, type = 'success') {
+            messageText.textContent = message;
+            messageBox.className = `mt-4 p-3 rounded-lg text-center ${type === 'success' ? 'bg-green-100 text-green-800 border border-green-300' : 'bg-red-100 text-red-800 border border-red-300'}`;
         }
-        
-        // Filter games by category
-        function filterGames(category) {
-            const gameCards = document.querySelectorAll('.game-card');
-            
-            gameCards.forEach(card => {
-                if (category === 'all' || card.getAttribute('data-category') === category) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
+
+        function calculateSummary(month) {
+            const monthlyExpenses = expenses.filter(expense => expense.month === month);
+            if (monthlyExpenses.length === 0) {
+                summaryContent.innerHTML = `<p class="text-gray-700">No expenses added yet for ${month}.</p>`;
+                return;
+            }
+
+            let total = 0;
+            const categoryTotals = {};
+            const personTotals = {};
+
+            monthlyExpenses.forEach(expense => {
+                total += expense.amount;
+                if (!categoryTotals[expense.category]) {
+                    categoryTotals[expense.category] = 0;
+                }
+                categoryTotals[expense.category] += expense.amount;
+
+                if (!personTotals[expense.name]) {
+                    personTotals[expense.name] = 0;
+                }
+                personTotals[expense.name] += expense.amount;
+            });
+
+            let summaryHTML = `<h3 class="text-lg font-semibold mb-2 text-gray-800">Total Expenses for ${month}: <span class="text-blue-600 font-bold">${total.toFixed(2)}</span></h3>`;
+            summaryHTML += `<h4 class="text-md font-semibold mt-3 mb-1 text-gray-800">Category Breakdown:</h4>`;
+            for (const category in categoryTotals) {
+                summaryHTML += `<p class="text-gray-700"><span class="font-medium capitalize">${category}:</span> <span class="text-green-600 font-bold">${categoryTotals[category].toFixed(2)}</span></p>`;
+            }
+
+            summaryHTML += `<h4 class="text-md font-semibold mt-3 mb-1 text-gray-800">Individual Contributions:</h4>`;
+             for (const person in personTotals) {
+                summaryHTML += `<p class="text-gray-700"><span class="font-medium">${person}:</span> <span class="text-purple-600 font-bold">${personTotals[person].toFixed(2)}</span></p>`;
+            }
+            summaryContent.innerHTML = summaryHTML;
+        }
+
+        expenseForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            const name = event.target.name.value.trim();
+            const category = event.target.category.value;
+            const amount = parseFloat(event.target.amount.value);
+            const month = event.target.month.value;
+
+            if (!name || !category || isNaN(amount) || amount <= 0 || !month) {
+                displayMessage('Please fill out all fields with valid values.', 'error');
+                return;
+            }
+
+            const newExpense = { name, category, amount, month };
+            expenses.push(newExpense);
+            displayMessage('Expense added successfully!  Submitting to Google Sheets...', 'success');
+            event.target.reset();
+            calculateSummary(month);
+            appendDataToSheet(newExpense); // Send data to Google Sheets
+        });
+
+        function appendDataToSheet(expense) {
+            const { name, category, amount, month } = expense;
+            const values = [[name, category, amount, month]];
+            const body = {
+                values: values,
+            };
+            gapi.client.sheets.spreadsheets.values.append({
+                spreadsheetId: SPREADSHEET_ID,
+                range: SHEET_NAME,
+                valueInputOption: 'RAW',  // Or 'USER_ENTERED'
+                insertDataOption: 'INSERT_ROWS',
+                resource: body,
+            }).then((response) => {
+                console.log('Data appended to Google Sheets:', response);
+                displayMessage('Expense added to Google Sheets successfully!', 'success');
+            }).catch((error) => {
+                console.error('Error appending data to Google Sheets:', error);
+                displayMessage('Error adding expense to Google Sheets. Check console for details.', 'error');
+            });
+        }
+
+        // Simulate sending SMS reminders (for demonstration purposes)
+        function sendSMSReminder(name, month) {
+            // In a real application, you would use an SMS gateway API (e.g., Twilio)
+            console.log(`Sending SMS reminder to ${name} for ${month} expenses...`);
+            //  Replace this with actual SMS sending logic using an API like Twilio
+            // twilioClient.messages
+            //   .create({
+            //      body: `Hi ${name}, this is a friendly reminder to submit your expenses for ${month}.`,
+            //      from: '+1234567890', // Your Twilio phone number
+            //      to: '+11234567890'  // The recipient's phone number
+            //    })
+            //   .then(message => console.log(message.sid))
+            //   .catch(error => console.error(error));
+        }
+
+        // Simulate checking for missing expenses and sending reminders
+        function checkAndRemind() {
+            if (expenses.length === 0) return;
+            const currentMonth = new Date().toISOString().slice(0, 7); // YYYY-MM
+            const familyMembers = new Set(expenses.map(expense => expense.name));
+            const expensesThisMonth = expenses.filter(expense => expense.month === currentMonth);
+            const membersWhoSubmitted = new Set(expensesThisMonth.map(expense => expense.name));
+
+            familyMembers.forEach(member => {
+                if (!membersWhoSubmitted.has(member)) {
+                    sendSMSReminder(member, currentMonth);
                 }
             });
         }
-        
-        // Search functionality
-        document.querySelector('.search-bar input').addEventListener('keyup', function(e) {
-            if (e.key === 'Enter') {
-                const searchTerm = this.value.toLowerCase();
-                const gameCards = document.querySelectorAll('.game-card');
-                
-                gameCards.forEach(card => {
-                    const gameName = card.querySelector('h3').textContent.toLowerCase();
-                    if (gameName.includes(searchTerm)) {
-                        card.style.display = 'block';
-                    } else {
-                        card.style.display = 'none';
-                    }
-                });
-            }
-        });
+
+        // Run the checkAndRemind function periodically (e.g., daily)
+        setInterval(checkAndRemind, 24 * 60 * 60 * 1000); // Check daily
+
+        // Load Google Sheets API and initialize the client
+        gapi.load('client', initClient);
+
     </script>
 </body>
 </html>
