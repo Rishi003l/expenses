@@ -80,33 +80,27 @@
         let expenses = [];
 
         // Google Sheets API configuration
-        const SPREADSHEET_ID = 'YOUR_SPREADSHEET_ID'; // Replace with your spreadsheet ID
-        const SHEET_NAME = 'Sheet1'; // Replace with your sheet name
-        const CLIENT_ID = 'YOUR_CLIENT_ID'; // Replace with your client ID
-        const API_KEY = '<script>
-    // Google Sheets API configuration
-    const SPREADSHEET_ID = '1iJabDMBsdecEvijOC5eKwDnH0jHaluEGtMU8_2veplw';
-    const SHEET_NAME = 'Sheet1';
-    const CLIENT_ID = '520182439205-lv53p2amhtj0qceji9d3gl3crm7efhqk.apps.googleusercontent.com';
-    const API_KEY = 'AIzaSyDSQyv22FC_NmfvbY7oSqfRXKQjB5m58eA';
-
-    // ... the rest of your JavaScript code ...
-</script>'; // Replace with your API key
+        const SPREADSHEET_ID = '1iJabDMBsdecEvijOC5eKwDnH0jHaluEGtMU8_2veplw';
+        const SHEET_NAME = 'Sheet1';
+        const CLIENT_ID = '520182439205-lv53p2amhtj0qceji9d3gl3crm7efhqk.apps.googleusercontent.com';
+        const API_KEY = 'AIzaSyDSQyv22FC_NmfvbY7oSqfRXKQjB5m58eA';
 
         // Initialize Google API client
         function initClient() {
-            gapi.client.init({
-                apiKey: API_KEY,
-                clientId: CLIENT_ID,
-                discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
-                scope: 'https://www.googleapis.com/auth/spreadsheets',
-            }).then(() => {
-                console.log('Google Sheets API client initialized');
-                // You can call listMajors here if you want to test the connection
-                // listMajors();
-            }).catch(err => {
-                console.error("Error initializing gapi client:", err);
-                displayMessage('Error initializing Google Sheets API. Check console for details.', 'error');
+            gapi.load('client', () => {
+                gapi.client.init({
+                    apiKey: API_KEY,
+                    clientId: CLIENT_ID,
+                    discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
+                    scope: 'https://www.googleapis.com/auth/spreadsheets',
+                }).then(() => {
+                    console.log('Google Sheets API client initialized');
+                    // You can call listMajors here if you want to test the connection
+                    // listMajors();
+                }).catch(err => {
+                    console.error("Error initializing gapi client:", err);
+                    displayMessage('Error initializing Google Sheets API. Check console for details.', 'error');
+                });
             });
         }
 
@@ -183,7 +177,7 @@
             gapi.client.sheets.spreadsheets.values.append({
                 spreadsheetId: SPREADSHEET_ID,
                 range: SHEET_NAME,
-                valueInputOption: 'RAW',  // Or 'USER_ENTERED'
+                valueInputOption: 'RAW',
                 insertDataOption: 'INSERT_ROWS',
                 resource: body,
             }).then((response) => {
@@ -213,7 +207,7 @@
         // Simulate checking for missing expenses and sending reminders
         function checkAndRemind() {
             if (expenses.length === 0) return;
-            const currentMonth = new Date().toISOString().slice(0, 7); // YYYY-MM
+            const currentMonth = new Date().toISOString().slice(0, 7);
             const familyMembers = new Set(expenses.map(expense => expense.name));
             const expensesThisMonth = expenses.filter(expense => expense.month === currentMonth);
             const membersWhoSubmitted = new Set(expensesThisMonth.map(expense => expense.name));
@@ -234,3 +228,9 @@
     </script>
 </body>
 </html>
+```
+I've made the following changes:
+
+* **Moved gapi.load inside initClient:** The `gapi.load` function is now inside the `initClient` function. This ensures that the Google API client is loaded before any attempt to use it.
+
+This revised code should resolve the error and correctly initialize the Google Sheets API clie
