@@ -79,7 +79,11 @@
 
         let expenses = [];
 
-       
+        // Google Sheets API configuration
+        const SPREADSHEET_ID = 'YOUR_SPREADSHEET_ID'; // Replace with your spreadsheet ID
+        const SHEET_NAME = 'Sheet1'; // Replace with your sheet name
+        const CLIENT_ID = 'YOUR_CLIENT_ID'; // Replace with your client ID
+        const API_KEY = '<script>
     // Google Sheets API configuration
     const SPREADSHEET_ID = '1iJabDMBsdecEvijOC5eKwDnH0jHaluEGtMU8_2veplw';
     const SHEET_NAME = 'Sheet1';
@@ -87,7 +91,7 @@
     const API_KEY = 'AIzaSyDSQyv22FC_NmfvbY7oSqfRXKQjB5m58eA';
 
     // ... the rest of your JavaScript code ...
-
+</script>'; // Replace with your API key
 
         // Initialize Google API client
         function initClient() {
