@@ -169,6 +169,7 @@
         function appendDataToSheet(expense) {
             const { name, category, amount, month } = expense;
             const values = [[name, category, amount, month]];
+            
             const body = {
                 values: values,
             };
