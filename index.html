@@ -1,494 +1,291 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Family Expense Tracker</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6; /* Light gray background */
-        }
-        .modal {
-            display: none; /* Hidden by default */
-            position: fixed; /* Stay in place */
-            z-index: 1000; /* Sit on top */
-            left: 0;
-            top: 0;
-            width: 100%; /* Full width */
-            height: 100%; /* Full height */
-            overflow: auto; /* Enable scroll if needed */
-            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-        }
-        .modal-content {
-            background-color: #fefefe;
-            margin: 10% auto; /* 10% from the top and centered */
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%; /* Could be more or less, depending on screen size */
-            max-width: 500px;
-            border-radius: 0.5rem;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        .close-button {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-        .close-button:hover,
-        .close-button:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        /* Custom button styles for better appeal */
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.375rem;
-            font-weight: 600;
-            transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
-            cursor: pointer;
-        }
-        .btn-primary {
-            background-color: #4f46e5; /* Indigo */
-            color: white;
-        }
-        .btn-primary:hover {
-            background-color: #4338ca;
-        }
-        .btn-primary:active {
-            transform: scale(0.98);
-        }
-        .btn-secondary {
-            background-color: #6b7280; /* Gray */
-            color: white;
-        }
-        .btn-secondary:hover {
-            background-color: #4b5563;
-        }
-        .btn-danger {
-            background-color: #ef4444; /* Red */
-            color: white;
-        }
-        .btn-danger:hover {
-            background-color: #dc2626;
-        }
-        .table-header {
-            background-color: #e5e7eb; /* Lighter gray for table header */
-        }
-    </style>
-</head>
-<body class="antialiased text-gray-800">
-    <div class="container mx-auto p-4 md:p-8 max-w-4xl">
-        <header class="mb-8 text-center">
-            <h1 class="text-4xl font-bold text-indigo-600">Family Expense Tracker</h1>
-            <p class="text-gray-600 mt-2">Manage and track your family's monthly expenses seamlessly.</p>
-        </header>
+import React, { useState, useEffect } from 'react';
 
-        <section id="expense-form-section" class="bg-white p-6 rounded-lg shadow-lg mb-8">
-            <h2 class="text-2xl font-semibold mb-6 text-gray-700">Add New Expense</h2>
-            <form id="expenseForm">
-                <input type="hidden" id="expenseId" value=""> <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-                    <div>
-                        <label for="familyMember" class="block text-sm font-medium text-gray-700 mb-1">Family Member:</label>
-                        <select id="familyMember" name="familyMember" required
-                                class="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                            <option value="Akkela Lingeshwar">Akkela Lingeshwar</option>
-                            <option value="Akkela Vani">Akkela Vani</option>
-                            <option value="Akkela Ruchika">Akkela Ruchika</option>
-                            <option value="Akkela Rishi">Akkela Rishi</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="expenseAmount" class="block text-sm font-medium text-gray-700 mb-1">Amount (₹):</label>
-                        <input type="number" id="expenseAmount" name="expenseAmount" required min="0" step="0.01"
-                               class="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-                               placeholder="e.g., 1500.50">
-                    </div>
-                </div>
-                <div class="mb-6">
-                    <label for="expenseDescription" class="block text-sm font-medium text-gray-700 mb-1">Description:</label>
-                    <input type="text" id="expenseDescription" name="expenseDescription" required
-                           class="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-                           placeholder="e.g., Groceries, Electricity Bill">
-                </div>
-                 <div class="mb-6">
-                    <label for="expenseDate" class="block text-sm font-medium text-gray-700 mb-1">Date:</label>
-                    <input type="date" id="expenseDate" name="expenseDate" required
-                           class="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                </div>
-                <div class="flex justify-end">
-                    <button type="submit" id="submitButton" class="btn btn-primary">Add Expense</button>
-                </div>
-            </form>
-        </section>
+// Assume Tailwind CSS is available in the environment
 
-        <section id="expenses-table-section" class="bg-white p-6 rounded-lg shadow-lg mb-8">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-semibold text-gray-700">Monthly Expenses</h2>
-                <div class="flex items-center space-x-2">
-                    <label for="monthFilter" class="text-sm font-medium text-gray-700">Filter by Month:</label>
-                    <input type="month" id="monthFilter" name="monthFilter" class="p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                </div>
-            </div>
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="table-header">
-                        <tr>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Member</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Description</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Amount (₹)</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Date</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="expensesTableBody" class="bg-white divide-y divide-gray-200">
-                        <tr>
-                            <td colspan="5" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center" id="noExpensesMessage">
-                                No expenses recorded yet for the selected month.
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
+// Data structure for an expense entry
+interface ExpenseEntry {
+  month: string;
+  lingeshwar: number | '';
+  vani: number | '';
+  ruchika: number | '';
+  rishi: number | '';
+  total: number;
+}
 
-        <section id="total-expenses-section" class="bg-indigo-600 text-white p-6 rounded-lg shadow-lg">
-            <h2 class="text-2xl font-semibold">Total Expenses for Selected Month:</h2>
-            <p id="totalExpenses" class="text-4xl font-bold mt-2">₹0.00</p>
-        </section>
+// Family members
+const familyMembers = [
+  'Akkela Lingeshwar',
+  'Akkela Vani',
+  'Akkela Ruchika',
+  'Akkela Rishi',
+];
 
-        <div id="editExpenseModal" class="modal">
-            <div class="modal-content">
-                <span class="close-button" onclick="closeEditModal()">&times;</span>
-                <h2 class="text-2xl font-semibold mb-6 text-gray-700">Edit Expense</h2>
-                <form id="editExpenseForm">
-                    <input type="hidden" id="editExpenseId">
-                    <div class="mb-4">
-                        <label for="editFamilyMember" class="block text-sm font-medium text-gray-700 mb-1">Family Member:</label>
-                        <select id="editFamilyMember" name="familyMember" required
-                                class="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                            <option value="Akkela Lingeshwar">Akkela Lingeshwar</option>
-                            <option value="Akkela Vani">Akkela Vani</option>
-                            <option value="Akkela Ruchika">Akkela Ruchika</option>
-                            <option value="Akkela Rishi">Akkela Rishi</option>
-                        </select>
-                    </div>
-                    <div class="mb-4">
-                        <label for="editExpenseAmount" class="block text-sm font-medium text-gray-700 mb-1">Amount (₹):</label>
-                        <input type="number" id="editExpenseAmount" name="expenseAmount" required min="0" step="0.01"
-                               class="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                    </div>
-                    <div class="mb-6">
-                        <label for="editExpenseDescription" class="block text-sm font-medium text-gray-700 mb-1">Description:</label>
-                        <input type="text" id="editExpenseDescription" name="expenseDescription" required
-                               class="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                    </div>
-                    <div class="mb-6">
-                        <label for="editExpenseDate" class="block text-sm font-medium text-gray-700 mb-1">Date:</label>
-                        <input type="date" id="editExpenseDate" name="expenseDate" required
-                               class="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                    </div>
-                    <div class="flex justify-end space-x-3">
-                        <button type="button" onclick="closeEditModal()" class="btn btn-secondary">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Save Changes</button>
-                    </div>
-                </form>
-            </div>
+function App() {
+  // State to hold the expense data
+  const [expenses, setExpenses] = useState<ExpenseEntry[]>([]);
+  // State for the current month's input
+  const [currentMonth, setCurrentMonth] = useState('');
+  const [currentExpenses, setCurrentExpenses] = useState({
+    lingeshwar: '' as number | '',
+    vani: '' as number | '',
+    ruchika: '' as number | '',
+    rishi: '' as number | '',
+  });
+  // State for editing
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [editedExpenses, setEditedExpenses] = useState<ExpenseEntry | null>(null);
+
+  // Calculate total expenses for an entry
+  const calculateTotal = (entry: any): number => {
+    const total = (parseFloat(entry.lingeshwar || '0') || 0) +
+                  (parseFloat(entry.vani || '0') || 0) +
+                  (parseFloat(entry.ruchika || '0') || 0) +
+                  (parseFloat(entry.rishi || '0') || 0);
+    return parseFloat(total.toFixed(2)); // Ensure total is a number and formatted
+  };
+
+  // Handle input changes for the current month's expenses
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setCurrentExpenses({
+      ...currentExpenses,
+      [name]: value === '' ? '' : parseFloat(value), // Store as number or empty string
+    });
+  };
+
+  // Handle adding a new monthly expense entry
+  const handleAddExpense = () => {
+    if (!currentMonth) {
+      alert('Please enter the month.');
+      return;
+    }
+
+    const newEntry: ExpenseEntry = {
+      month: currentMonth,
+      lingeshwar: currentExpenses.lingeshwar,
+      vani: currentExpenses.vani,
+      ruchika: currentExpenses.ruchika,
+      rishi: currentExpenses.rishi,
+      total: calculateTotal(currentExpenses),
+    };
+
+    setExpenses([...expenses, newEntry]);
+    // Clear the input fields
+    setCurrentMonth('');
+    setCurrentExpenses({
+      lingeshwar: '',
+      vani: '',
+      ruchika: '',
+      rishi: '',
+    });
+  };
+
+  // Handle starting the editing process
+  const handleEditClick = (index: number) => {
+    setEditingIndex(index);
+    setEditedExpenses({ ...expenses[index] }); // Create a copy for editing
+  };
+
+  // Handle input changes while editing
+  const handleEditInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    if (editedExpenses) {
+      setEditedExpenses({
+        ...editedExpenses,
+        [name]: value === '' ? '' : parseFloat(value),
+        total: calculateTotal({ // Recalculate total during editing
+            ...editedExpenses,
+            [name]: value === '' ? '' : parseFloat(value),
+          }),
+      });
+    }
+  };
+
+  // Handle saving the edited entry
+  const handleSaveEdit = (index: number) => {
+    if (editedExpenses) {
+      const updatedExpenses = [...expenses];
+      updatedExpenses[index] = editedExpenses;
+      setExpenses(updatedExpenses);
+      setEditingIndex(null); // Exit editing mode
+      setEditedExpenses(null);
+    }
+  };
+
+  // Handle cancelling the editing process
+  const handleCancelEdit = () => {
+    setEditingIndex(null);
+    setEditedExpenses(null);
+  };
+
+  // Handle deleting an expense entry
+  const handleDeleteClick = (index: number) => {
+    const updatedExpenses = expenses.filter((_, i) => i !== index);
+    setExpenses(updatedExpenses);
+  };
+
+  // Effect to re-calculate total when currentExpenses change
+  useEffect(() => {
+    // This effect is mainly for initial calculation when inputs are filled
+    // Total is recalculated on add and edit input change
+  }, [currentExpenses]);
+
+
+  return (
+    <div className="container mx-auto p-4 font-sans">
+      <h1 className="text-3xl font-bold text-center mb-6 text-gray-800">Family Expense Tracker</h1>
+
+      {/* Input Form */}
+      <div className="bg-white shadow-md rounded-lg p-6 mb-8">
+        <h2 className="text-2xl font-semibold mb-4 text-gray-700">Add Monthly Expenses</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label htmlFor="month" className="block text-sm font-medium text-gray-700">Month</label>
+            <input
+              type="text"
+              id="month"
+              value={currentMonth}
+              onChange={(e) => setCurrentMonth(e.target.value)}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2"
+              placeholder="e.g., May 2024"
+            />
+          </div>
         </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+          {familyMembers.map((member, index) => {
+            const nameKey = member.split(' ')[1].toLowerCase() as keyof typeof currentExpenses; // Get key like 'lingeshwar'
+            return (
+              <div key={index}>
+                <label htmlFor={nameKey} className="block text-sm font-medium text-gray-700">{member}</label>
+                <input
+                  type="number"
+                  id={nameKey}
+                  name={nameKey}
+                  value={currentExpenses[nameKey]}
+                  onChange={handleInputChange}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2"
+                  placeholder="Expense amount"
+                  min="0"
+                />
+              </div>
+            );
+          })}
+        </div>
+        <button
+          onClick={handleAddExpense}
+          className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+        >
+          Add Expense Entry
+        </button>
+      </div>
 
-        <div id="messageArea" class="mt-6 p-4 rounded-md text-center" style="display: none;"></div>
-
+      {/* Expense Table */}
+      <div className="bg-white shadow-md rounded-lg p-6">
+        <h2 className="text-2xl font-semibold mb-4 text-gray-700">Monthly Expenses Summary</h2>
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200 rounded-md overflow-hidden">
+            <thead className="bg-gray-50">
+              <tr>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Month
+                </th>
+                {familyMembers.map((member, index) => (
+                  <th key={index} scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {member.split(' ')[1]}
+                  </th>
+                ))}
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Total
+                </th>
+                <th scope="col" className="relative px-6 py-3">
+                  <span className="sr-only">Edit</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {expenses.map((entry, index) => (
+                <tr key={index}>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    {editingIndex === index ? (
+                       <input
+                         type="text"
+                         value={editedExpenses?.month || ''}
+                         onChange={(e) => editedExpenses && setEditedExpenses({...editedExpenses, month: e.target.value})}
+                         className="rounded-md border-gray-300 shadow-sm sm:text-sm p-1 w-24"
+                       />
+                    ) : (
+                      entry.month
+                    )}
+                  </td>
+                  {familyMembers.map((member, memberIndex) => {
+                     const nameKey = member.split(' ')[1].toLowerCase() as keyof typeof currentExpenses;
+                    return (
+                      <td key={memberIndex} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {editingIndex === index && editedExpenses ? (
+                          <input
+                            type="number"
+                            name={nameKey}
+                            value={editedExpenses[nameKey]}
+                            onChange={handleEditInputChange}
+                             className="rounded-md border-gray-300 shadow-sm sm:text-sm p-1 w-20"
+                            min="0"
+                          />
+                        ) : (
+                          typeof entry[nameKey] === 'number' ? entry[nameKey].toFixed(2) : ''
+                        )}
+                      </td>
+                    );
+                  })}
+                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                     {editingIndex === index && editedExpenses ? (
+                       // Display updated total while editing
+                       calculateTotal(editedExpenses).toFixed(2)
+                     ) : (
+                       // Display original total when not editing
+                       entry.total.toFixed(2)
+                     )}
+                   </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    {editingIndex === index ? (
+                      <>
+                        <button
+                          onClick={() => handleSaveEdit(index)}
+                          className="text-green-600 hover:text-green-900 mr-3"
+                        >
+                          Save
+                        </button>
+                        <button
+                          onClick={handleCancelEdit}
+                          className="text-gray-600 hover:text-gray-900"
+                        >
+                          Cancel
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <button
+                          onClick={() => handleEditClick(index)}
+                          className="text-blue-600 hover:text-blue-900 mr-3"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDeleteClick(index)}
+                          className="text-red-600 hover:text-red-900"
+                        >
+                          Delete
+                        </button>
+                      </>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
+  );
+}
 
-    <script>
-        // --- Configuration ---
-        const BACKEND_URL = 'http://localhost:5000'; // Replace with your actual backend URL if different
-        const LOCAL_STORAGE_KEY = 'familyExpenses';
-
-        // --- DOM Elements ---
-        const expenseForm = document.getElementById('expenseForm');
-        const expensesTableBody = document.getElementById('expensesTableBody');
-        const totalExpensesEl = document.getElementById('totalExpenses');
-        // const expenseIdInput = document.getElementById('expenseId'); // Not directly used for local storage ID, but good for backend
-        const monthFilter = document.getElementById('monthFilter');
-        const noExpensesMessage = document.getElementById('noExpensesMessage');
-        const messageArea = document.getElementById('messageArea');
-
-        // Edit Modal Elements
-        const editModal = document.getElementById('editExpenseModal');
-        const editExpenseForm = document.getElementById('editExpenseForm');
-        const editExpenseIdInput = document.getElementById('editExpenseId'); // This will store the ID of the expense being edited
-        const editFamilyMemberInput = document.getElementById('editFamilyMember');
-        const editExpenseAmountInput = document.getElementById('editExpenseAmount');
-        const editExpenseDescriptionInput = document.getElementById('editExpenseDescription');
-        const editExpenseDateInput = document.getElementById('editExpenseDate');
-
-        // --- State ---
-        let expenses = []; // This will hold expenses, now loaded from localStorage
-
-        // --- Utility Functions ---
-        function showMessage(message, type = 'success') {
-            messageArea.textContent = message;
-            messageArea.className = `mt-6 p-4 rounded-md text-center ${type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`;
-            messageArea.style.display = 'block';
-            setTimeout(() => {
-                messageArea.style.display = 'none';
-            }, 3000);
-        }
-
-        function saveExpensesToLocalStorage() {
-            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(expenses));
-        }
-
-        function loadExpensesFromLocalStorage() {
-            const storedExpenses = localStorage.getItem(LOCAL_STORAGE_KEY);
-            if (storedExpenses) {
-                expenses = JSON.parse(storedExpenses);
-            } else {
-                expenses = []; // Initialize if nothing is stored
-            }
-        }
-
-        // Set default date for expense form to today
-        document.getElementById('expenseDate').valueAsDate = new Date();
-
-        // Set default month filter to current month
-        function setDefaultMonthFilter() {
-            const today = new Date();
-            const year = today.getFullYear();
-            const month = (today.getMonth() + 1).toString().padStart(2, '0'); // JavaScript months are 0-indexed
-            monthFilter.value = `${year}-${month}`;
-        }
-
-        // --- API Communication (Simulated with localStorage) ---
-        // These functions now interact with the local `expenses` array and localStorage.
-        // For a real backend, you would uncomment the fetch calls.
-
-        async function fetchExpensesFromServer(selectedMonth) {
-            // This function is now primarily for filtering the locally stored `expenses` array.
-            // No server call needed for localStorage-based persistence.
-            console.log("Filtering expenses for month:", selectedMonth);
-            if (!selectedMonth) return expenses; // If no month selected, show all (or handle as needed)
-
-            return expenses.filter(expense => {
-                if (!expense.date) return false;
-                // Ensure date comparison is correct; expense.date is YYYY-MM-DD
-                return expense.date.startsWith(selectedMonth);
-            });
-        }
-
-        async function addExpenseToServer(expenseData) {
-            // Simulate backend: add to local array, assign a unique ID, and save to localStorage
-            return new Promise((resolve) => {
-                // setTimeout(() => { // Simulate network delay (optional)
-                    const newExpense = { ...expenseData, id: Date.now().toString() }; // Simple unique ID
-                    expenses.push(newExpense);
-                    saveExpensesToLocalStorage();
-                    resolve(newExpense);
-                // }, 100);
-            });
-        }
-
-        async function updateExpenseOnServer(id, expenseData) {
-            // Simulate backend: update in local array and save to localStorage
-            return new Promise((resolve, reject) => {
-                // setTimeout(() => { // Simulate network delay (optional)
-                    const index = expenses.findIndex(exp => exp.id === id);
-                    if (index !== -1) {
-                        expenses[index] = { ...expenses[index], ...expenseData }; // Keep original ID
-                        saveExpensesToLocalStorage();
-                        resolve(expenses[index]);
-                    } else {
-                        reject(new Error("Expense not found for update"));
-                    }
-                // }, 100);
-            });
-        }
-
-        async function deleteExpenseFromServer(id) {
-            // Simulate backend: remove from local array and save to localStorage
-            return new Promise((resolve, reject) => {
-                // setTimeout(() => { // Simulate network delay (optional)
-                    const initialLength = expenses.length;
-                    expenses = expenses.filter(exp => exp.id !== id);
-                    if (expenses.length < initialLength) {
-                        saveExpensesToLocalStorage();
-                        resolve({ message: "Expense deleted successfully" });
-                    } else {
-                        reject(new Error("Expense not found for deletion"));
-                    }
-                // }, 100);
-            });
-        }
-
-
-        // --- Core Logic ---
-        function renderExpenses(expensesToRender) {
-            expensesTableBody.innerHTML = ''; // Clear existing rows
-            let currentTotal = 0;
-
-            if (!expensesToRender || expensesToRender.length === 0) { // Added !expensesToRender check
-                noExpensesMessage.style.display = 'table-cell';
-            } else {
-                noExpensesMessage.style.display = 'none';
-                expensesToRender.forEach(expense => {
-                    const row = expensesTableBody.insertRow();
-                    row.insertCell().textContent = expense.familyMember;
-                    row.insertCell().textContent = expense.description;
-                    const amountCell = row.insertCell();
-                    amountCell.textContent = `₹${parseFloat(expense.amount).toFixed(2)}`;
-                    amountCell.classList.add('text-right');
-                    row.insertCell().textContent = expense.date ? new Date(expense.date + 'T00:00:00').toLocaleDateString() : 'N/A'; // Ensure date is parsed correctly
-
-                    const actionsCell = row.insertCell();
-                    actionsCell.classList.add('space-x-2', 'text-center', 'whitespace-nowrap'); // Added whitespace-nowrap
-
-                    const editButton = document.createElement('button');
-                    editButton.innerHTML = `
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-600 hover:text-indigo-800 inline-block mr-1" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />
-                            <path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd" />
-                        </svg>Edit`;
-                    editButton.classList.add('font-medium', 'py-1', 'px-2', 'rounded', 'hover:bg-indigo-100'); // Added some padding and hover
-                    editButton.onclick = () => openEditModal(expense);
-
-                    const deleteButton = document.createElement('button');
-                    deleteButton.innerHTML = `
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-500 hover:text-red-700 inline-block mr-1" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
-                        </svg>Delete`;
-                    deleteButton.classList.add('font-medium', 'ml-2', 'py-1', 'px-2', 'rounded', 'hover:bg-red-100'); // Added some padding and hover
-                    deleteButton.onclick = () => handleDeleteExpense(expense.id);
-
-                    actionsCell.appendChild(editButton);
-                    actionsCell.appendChild(deleteButton);
-
-                    currentTotal += parseFloat(expense.amount);
-                });
-            }
-            totalExpensesEl.textContent = `₹${currentTotal.toFixed(2)}`;
-        }
-
-        async function loadAndRenderFilteredExpenses() {
-            const selectedMonth = monthFilter.value; // YYYY-MM format
-            try {
-                // fetchExpensesFromServer now filters the global 'expenses' array (loaded from localStorage)
-                const filteredExpenses = await fetchExpensesFromServer(selectedMonth);
-                renderExpenses(filteredExpenses);
-            } catch (error) {
-                console.error("Error loading or filtering expenses:", error);
-                showMessage("Could not load or filter expenses.", "error");
-                renderExpenses([]); // Render an empty table on error
-            }
-        }
-
-
-        // --- Event Handlers ---
-        expenseForm.addEventListener('submit', async function(event) {
-            event.preventDefault();
-            const familyMember = document.getElementById('familyMember').value;
-            const amount = document.getElementById('expenseAmount').value;
-            const description = document.getElementById('expenseDescription').value;
-            const date = document.getElementById('expenseDate').value;
-
-            if (!familyMember || !amount || !description || !date) {
-                showMessage("All fields are required.", "error");
-                return;
-            }
-
-            const expenseData = { familyMember, amount, description, date };
-
-            try {
-                await addExpenseToServer(expenseData); // This now saves to localStorage via the global 'expenses' array
-                await loadAndRenderFilteredExpenses(); // Reload and render to show the new expense and update total
-                expenseForm.reset();
-                document.getElementById('expenseDate').valueAsDate = new Date(); // Reset date to today
-                showMessage("Expense added successfully!", "success");
-            } catch (error) {
-                console.error("Error adding expense:", error);
-                showMessage("Failed to add expense. " + error.message, "error");
-            }
-        });
-
-        editExpenseForm.addEventListener('submit', async function(event) {
-            event.preventDefault();
-            const expenseIdToEdit = editExpenseIdInput.value; // Get ID from hidden input
-            if (!expenseIdToEdit) {
-                console.error("No expense ID found for editing.");
-                showMessage("Error: No expense selected for editing.", "error");
-                return;
-            }
-
-            const updatedData = {
-                id: expenseIdToEdit, // Ensure the ID is part of the data for update function
-                familyMember: editFamilyMemberInput.value,
-                amount: editExpenseAmountInput.value,
-                description: editExpenseDescriptionInput.value,
-                date: editExpenseDateInput.value
-            };
-
-            try {
-                await updateExpenseOnServer(expenseIdToEdit, updatedData);
-                await loadAndRenderFilteredExpenses();
-                closeEditModal();
-                showMessage("Expense updated successfully!", "success");
-            } catch (error) {
-                console.error("Error updating expense:", error);
-                showMessage("Failed to update expense. " + error.message, "error");
-            }
-        });
-
-
-        async function handleDeleteExpense(id) {
-            if (confirm('Are you sure you want to delete this expense?')) {
-                try {
-                    await deleteExpenseFromServer(id);
-                    await loadAndRenderFilteredExpenses(); // Re-render the table
-                    showMessage("Expense deleted successfully!", "success");
-                } catch (error) {
-                    console.error("Error deleting expense:", error);
-                    showMessage("Failed to delete expense. " + error.message, "error");
-                }
-            }
-        }
-
-        monthFilter.addEventListener('change', loadAndRenderFilteredExpenses);
-
-        // Edit Modal Functions
-        function openEditModal(expense) {
-            editExpenseIdInput.value = expense.id; // Set the ID in the hidden input
-            editFamilyMemberInput.value = expense.familyMember;
-            editExpenseAmountInput.value = expense.amount;
-            editExpenseDescriptionInput.value = expense.description;
-            editExpenseDateInput.value = expense.date; // Assumes date is in YYYY-MM-DD format
-            editModal.style.display = 'block';
-        }
-
-        function closeEditModal() {
-            editExpenseIdInput.value = ''; // Clear the ID
-            editModal.style.display = 'none';
-            editExpenseForm.reset();
-        }
-
-        // Close modal if user clicks outside of it
-        window.onclick = function(event) {
-            if (event.target == editModal) {
-                closeEditModal();
-            }
-        }
-
-        // --- Initialization ---
-        document.addEventListener('DOMContentLoaded', () => {
-            loadExpensesFromLocalStorage(); // Load any saved expenses from localStorage
-            setDefaultMonthFilter();      // Set default month for the filter
-            loadAndRenderFilteredExpenses(); // Initial load and render of expenses for the default month
-            console.log("App initialized. Expenses loaded from localStorage:", expenses);
-            showMessage("Welcome! Expenses are loaded from local storage (your browser). For multi-user sync, backend setup is needed.", "success")
-        });
-    </script>
-</body>
-</html>
+export default App;
