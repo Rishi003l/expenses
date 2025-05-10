@@ -23,6 +23,7 @@
         }
     </script>
     <script src="https://apis.google.com/js/api.js"></script>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
 </head>
 <body class="bg-gradient-to-tl from-purple-400 to-pink-300 min-h-screen flex justify-center items-center py-10">
     <div class="container bg-white rounded-lg shadow-md p-6 w-4/5 max-w-2xl">
@@ -86,23 +87,24 @@
         const API_KEY = 'AIzaSyDcSF3IA9ADnE55s6Of7eAxZLibt65PKL0';
 
         // Initialize Google API client
+        
         function initClient() {
-            gapi.load('client', () => {
-                gapi.client.init({
-                    apiKey: API_KEY,
-                    clientId: CLIENT_ID,
-                    discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
-                    scope: 'https://www.googleapis.com/auth/spreadsheets',
-                }).then(() => {
-                    console.log('Google Sheets API client initialized');
-                    // Initial call to load existing data
-                    loadExistingData();
-                }).catch(err => {
-                    console.error("Error initializing gapi client:", err);
-                    displayMessage('Error initializing Google Sheets API. Check console for details.', 'error');
-                });
+            gapi.client.init({
+                apiKey: API_KEY,
+                clientId: CLIENT_ID,
+                discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
+                scope: 'https://www.googleapis.com/auth/spreadsheets',
+            }).then(() => {
+                return gapi.auth2.getAuthInstance().signIn();
+            }).then(() => {
+                console.log('Signed in and initialized');
+                loadExistingData();
+            }).catch(err => {
+                console.error("Error initializing gapi client:", err);
+                displayMessage('Error initializing Google Sheets API. Check console for details.', 'error');
             });
         }
+
 
         function loadExistingData() {
              gapi.client.sheets.spreadsheets.values.get({
