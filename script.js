@@ -80,6 +80,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function setupEventListeners() {
     // Form submissions
+const uploadButton = document.getElementById('upload-to-sheets');
+if (uploadButton) uploadButton.addEventListener('click', uploadExpensesToSheets);
+
     if (expenseForm) expenseForm.addEventListener('submit', addExpense);
     if (editForm) editForm.addEventListener('submit', updateExpense);
     if (quickAddForm) quickAddForm.addEventListener('submit', quickAddExpense);
