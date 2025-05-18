@@ -1,6 +1,6 @@
 /**
  * Google Sheets API Integration for Family Expense Tracker
- * Handles authentication and data appending to Google Sheets
+ * Handles authentication and data appending to Google Sheets with duplicate check
  */
 
 const CLIENT_ID = '671675605527-8eoq5m2nvp3bkiabicejjolo9fl9lau5.apps.googleusercontent.com';
@@ -41,7 +41,7 @@ function gisLoaded() {
     tokenClient = google.accounts.oauth2.initTokenClient({
         client_id: CLIENT_ID,
         scope: SCOPES,
-        callback: '', // Set later
+        callback: '', // Will be set later
     });
     gisInited = true;
     updateUploadButton();
@@ -78,7 +78,7 @@ async function uploadExpensesToSheets() {
             return;
         }
 
-        if (!CLIENT_ID) {
+        if (!CLIENT_ID || !SPREADSHEET_ID) {
             showSetupInstructions();
             return;
         }
@@ -86,26 +86,47 @@ async function uploadExpensesToSheets() {
         showNotification('Authenticating with Google...', 'info');
         await getAccessToken();
 
-        const expenses = JSON.parse(localStorage.getItem('expenses')) || [];
-        if (expenses.length === 0) {
+        const localExpenses = JSON.parse(localStorage.getItem('expenses')) || [];
+        if (localExpenses.length === 0) {
             showNotification('No expenses to upload!', 'error');
             return;
         }
 
-        const values = expenses.map(expense => [
-            expense.id,
-            expense.familyMember,
-            expense.date,
-            expense.category,
-            expense.amount,
-            expense.description,
-            expense.timestamp || new Date().getTime()
+        // STEP 1: Read existing IDs from the sheet
+        const existingResponse = await gapi.client.sheets.spreadsheets.values.get({
+            spreadsheetId: SPREADSHEET_ID,
+            range: 'Sheet1!A2:A', // Skip headers
+        });
+
+        const existingIds = new Set();
+        if (existingResponse.result.values) {
+            existingResponse.result.values.forEach(row => {
+                if (row[0]) existingIds.add(row[0].toString());
+            });
+        }
+
+        // STEP 2: Filter out already uploaded
+        const newExpenses = localExpenses.filter(exp => !existingIds.has(exp.id.toString()));
+        if (newExpenses.length === 0) {
+            showNotification('No new expenses to upload.', 'info');
+            return;
+        }
+
+        // STEP 3: Format new expenses
+        const values = newExpenses.map(exp => [
+            exp.id,
+            exp.familyMember,
+            exp.date,
+            exp.category,
+            exp.amount,
+            exp.description,
+            exp.timestamp || new Date().getTime()
         ]);
 
-        showNotification('Uploading data to Google Sheets...', 'info');
+        showNotification(`Uploading ${values.length} new expenses...`, 'info');
 
-        // Append new rows (no clear)
-        const result = await gapi.client.sheets.spreadsheets.values.append({
+        // STEP 4: Append new data
+        await gapi.client.sheets.spreadsheets.values.append({
             spreadsheetId: SPREADSHEET_ID,
             range: 'Sheet1!A1',
             valueInputOption: 'USER_ENTERED',
@@ -115,17 +136,17 @@ async function uploadExpensesToSheets() {
             }
         });
 
-        showNotification('Data successfully uploaded to Google Sheets!', 'success');
+        showNotification(`Successfully uploaded ${values.length} expense(s) to Google Sheets!`, 'success');
     } catch (error) {
         console.error('Error uploading to Google Sheets:', error);
-        showNotification('Error uploading to Google Sheets. See console for details.', 'error');
+        showNotification('Error uploading to Google Sheets. Check console for details.', 'error');
     }
 }
 
-// Optional: Instructions modal for new users
+// Optional setup guide
 function showSetupInstructions() {
-    alert('Google Sheets API not configured. Please set up API key and OAuth client in google-sheets-api.js.');
+    alert('Google Sheets API not configured correctly. Check CLIENT_ID and SPREADSHEET_ID.');
 }
 
-// Load scripts on page load
+// Auto-load scripts
 window.addEventListener('DOMContentLoaded', loadGoogleAPIs);
