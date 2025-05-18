@@ -1,8 +1,3 @@
-/**
- * Google Sheets API Integration for Family Expense Tracker
- * Handles authentication and data appending to Google Sheets with duplicate check
- */
-
 const CLIENT_ID = '671675605527-8eoq5m2nvp3bkiabicejjolo9fl9lau5.apps.googleusercontent.com';
 const API_KEY = 'AIzaSyDcSF3IA9ADnE55s6Of7eAxZLibt65PKL0';
 const SPREADSHEET_ID = '18gkpS5t7HB6d9d0gaa3FWUXEjABf9Tlx3i0h_EmaVBY';
@@ -41,7 +36,7 @@ function gisLoaded() {
     tokenClient = google.accounts.oauth2.initTokenClient({
         client_id: CLIENT_ID,
         scope: SCOPES,
-        callback: '', // Will be set later
+        callback: '', // Will be assigned dynamically
     });
     gisInited = true;
     updateUploadButton();
@@ -49,26 +44,27 @@ function gisLoaded() {
 
 function updateUploadButton() {
     const uploadButton = document.getElementById('upload-to-sheets');
-    if (!uploadButton) return;
-    uploadButton.disabled = !(gapiInited && gisInited);
+    if (uploadButton) {
+        uploadButton.disabled = !(gapiInited && gisInited);
+    }
 }
 
 function getAccessToken() {
     return new Promise((resolve, reject) => {
-        if (gapi.client.getToken() === null) {
-            tokenClient.callback = (resp) => {
-                if (resp.error) reject(resp);
-                else resolve(resp);
-            };
-            tokenClient.requestAccessToken({ prompt: 'consent' });
-        } else {
-            tokenClient.callback = (resp) => {
-                if (resp.error) reject(resp);
-                else resolve(resp);
-            };
-            tokenClient.requestAccessToken({ prompt: '' });
-        }
+        tokenClient.callback = (resp) => {
+            if (resp.error) reject(resp);
+            else resolve(resp);
+        };
+        tokenClient.requestAccessToken({ prompt: '' });
     });
+}
+
+function formatDateForSheets(dateString) {
+    const date = new Date(dateString);
+    const dd = String(date.getDate()).padStart(2, '0');
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const yyyy = date.getFullYear();
+    return `${dd}-${mm}-${yyyy}`;
 }
 
 async function uploadExpensesToSheets() {
@@ -114,15 +110,14 @@ async function uploadExpensesToSheets() {
             return;
         }
 
-        // Format new expenses
+        // Format new expenses with readable date
         const values = newExpenses.map(exp => [
             exp.id,
             exp.familyMember,
-            exp.date,
+            formatDateForSheets(exp.date),
             exp.category,
             exp.amount,
-            exp.description,
-            exp.timestamp || new Date().getTime()
+            exp.description
         ]);
 
         showNotification(`Uploading ${values.length} new expenses...`, 'info');
@@ -148,8 +143,5 @@ function showSetupInstructions() {
     alert('Google Sheets API not configured correctly. Check CLIENT_ID and SPREADSHEET_ID.');
 }
 
-// Make global
 window.uploadExpensesToSheets = uploadExpensesToSheets;
-
-// Load Google APIs
 window.addEventListener('DOMContentLoaded', loadGoogleAPIs);
