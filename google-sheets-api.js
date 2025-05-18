@@ -73,6 +73,8 @@ function getAccessToken() {
 
 async function uploadExpensesToSheets() {
     try {
+        console.log("Upload to Sheets button clicked.");
+
         if (!gapiInited || !gisInited) {
             showNotification('Google API not initialized. Try again in a few seconds.', 'error');
             return;
@@ -92,10 +94,10 @@ async function uploadExpensesToSheets() {
             return;
         }
 
-        // STEP 1: Read existing IDs from the sheet
+        // Read existing IDs from the sheet
         const existingResponse = await gapi.client.sheets.spreadsheets.values.get({
             spreadsheetId: SPREADSHEET_ID,
-            range: 'Sheet1!A2:A', // Skip headers
+            range: 'Sheet1!A2:A',
         });
 
         const existingIds = new Set();
@@ -105,14 +107,14 @@ async function uploadExpensesToSheets() {
             });
         }
 
-        // STEP 2: Filter out already uploaded
+        // Filter out already uploaded
         const newExpenses = localExpenses.filter(exp => !existingIds.has(exp.id.toString()));
         if (newExpenses.length === 0) {
             showNotification('No new expenses to upload.', 'info');
             return;
         }
 
-        // STEP 3: Format new expenses
+        // Format new expenses
         const values = newExpenses.map(exp => [
             exp.id,
             exp.familyMember,
@@ -125,7 +127,6 @@ async function uploadExpensesToSheets() {
 
         showNotification(`Uploading ${values.length} new expenses...`, 'info');
 
-        // STEP 4: Append new data
         await gapi.client.sheets.spreadsheets.values.append({
             spreadsheetId: SPREADSHEET_ID,
             range: 'Sheet1!A1',
@@ -143,10 +144,12 @@ async function uploadExpensesToSheets() {
     }
 }
 
-// Optional setup guide
 function showSetupInstructions() {
     alert('Google Sheets API not configured correctly. Check CLIENT_ID and SPREADSHEET_ID.');
 }
 
-// Auto-load scripts
+// Make global
+window.uploadExpensesToSheets = uploadExpensesToSheets;
+
+// Load Google APIs
 window.addEventListener('DOMContentLoaded', loadGoogleAPIs);
